@@ -1,15 +1,15 @@
 package in.reqres;
 
+import in.reqres.models.pojo.UserBodyPojoModel;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
-import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class UserTests {
 
-    private final String morpheus = "{ \"name\": \"morpheus\", \"job\": \"leader\" }";
 
     @Test
     void getSingleUserTest() {
@@ -24,30 +24,43 @@ public class UserTests {
 
     @Test
     void createUserTest() {
+        UserBodyPojoModel user = new UserBodyPojoModel();
+        user.setName("morpheus");
+        user.setJob("leader");
+
         given()
                 .when()
                 .contentType(JSON)
-                .body(morpheus)
+                .log().all()
+                .body(user)
                 .post("https://reqres.in/api/users")
                 .then()
+                .log().all()
                 .statusCode(201)
                 .body("name", is("morpheus"))
+                .body("id", notNullValue())
+                .body("createdAt", notNullValue())
                 .body("job", is("leader"));
     }
 
     @Test
     void changeUserNameTest() {
+        UserBodyPojoModel user = new UserBodyPojoModel();
+        user.setName("morpheus");
+        user.setJob("leader");
 
         given()
                 .when()
+                .log().all()
                 .contentType(JSON)
-                .body(morpheus)
+                .body(user)
                 .patch("https://reqres.in/api/user/2")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("name", is("morpheus"))
                 .body("job", is("leader"))
-                .body("$", hasKey("updatedAt"));
+                .body("updatedAt", notNullValue());
     }
 
     @Test
@@ -61,8 +74,8 @@ public class UserTests {
                 .post("https://reqres.in/api/register")
                 .then()
                 .statusCode(200)
-                .body("token", is("QpwL5tke4Pnpja7X4"))
-                .body("$", hasKey("id"));
+                .body("token", notNullValue())
+                .body("id", notNullValue());
     }
 
     @Test
