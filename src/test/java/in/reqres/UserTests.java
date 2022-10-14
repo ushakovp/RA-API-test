@@ -1,6 +1,7 @@
 package in.reqres;
 
 import in.reqres.models.lombock.UserBodyLombockModel;
+import in.reqres.models.lombock.UserBodyResponseLombokModel;
 import in.reqres.models.pojo.UserBodyPojoModel;
 import in.reqres.models.pojo.UserBodyResponsePojoModel;
 import org.junit.jupiter.api.Test;
@@ -74,25 +75,30 @@ public class UserTests {
         user.setEmail("eve.holt@reqres.in");
         user.setPassword("pistol");
 
-        given()
+        UserBodyResponseLombokModel respone = given()
                 .when()
                 .contentType(JSON)
                 .body(user)
                 .post("https://reqres.in/api/register")
                 .then()
                 .statusCode(200)
-                .body("token", notNullValue())
-                .body("id", notNullValue());
+                .extract().as(UserBodyResponseLombokModel.class);
+
+        assertThat(respone.getId(), notNullValue());
+        assertThat(respone.getToken(), notNullValue());
     }
 
     @Test
     void userLoginTest() {
-        String eveHolt = "{ \"email\": \"eve.holt@reqres.in\", \"password\": \"pistol\" }";
+        UserBodyLombockModel user = new UserBodyLombockModel();
+        user.setEmail("eve.holt@reqres.in");
+        user.setPassword("pistol");
+
         given()
                 .when()
                 .contentType(JSON)
                 .log().all()
-                .body(eveHolt)
+                .body(user)
                 .post("https://reqres.in/api/login")
                 .then()
                 .log().body()
