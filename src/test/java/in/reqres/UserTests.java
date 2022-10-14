@@ -1,12 +1,14 @@
 package in.reqres;
 
+import in.reqres.models.lombock.UserBodyLombockModel;
 import in.reqres.models.pojo.UserBodyPojoModel;
+import in.reqres.models.pojo.UserBodyResponsePojoModel;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class UserTests {
 
@@ -28,7 +30,7 @@ public class UserTests {
         user.setName("morpheus");
         user.setJob("leader");
 
-        given()
+        UserBodyResponsePojoModel response = given()
                 .when()
                 .contentType(JSON)
                 .log().all()
@@ -37,15 +39,18 @@ public class UserTests {
                 .then()
                 .log().all()
                 .statusCode(201)
-                .body("name", is("morpheus"))
-                .body("id", notNullValue())
-                .body("createdAt", notNullValue())
-                .body("job", is("leader"));
+                .extract()
+                .as(UserBodyResponsePojoModel.class);
+
+        assertThat(response.getName(), equalTo("morpheus"));
+        assertThat(response.getJob(), equalTo("leader"));
+        assertThat(response.getCreatedAt(), notNullValue());
+        assertThat(response.getId(), notNullValue());
     }
 
     @Test
     void changeUserNameTest() {
-        UserBodyPojoModel user = new UserBodyPojoModel();
+        UserBodyLombockModel user = new UserBodyLombockModel();
         user.setName("morpheus");
         user.setJob("leader");
 
@@ -76,6 +81,22 @@ public class UserTests {
                 .statusCode(200)
                 .body("token", notNullValue())
                 .body("id", notNullValue());
+    }
+
+    @Test
+    void userLoginTest() {
+        String eveHolt = "{ \"email\": \"eve.holt@reqres.in\", \"password\": \"pistol\" }";
+        given()
+                .when()
+                .contentType(JSON)
+                .log().all()
+                .body(eveHolt)
+                .post("https://reqres.in/api/login")
+                .then()
+                .log().body()
+                .log().headers()
+                .statusCode(200)
+                .body("token", notNullValue());
     }
 
     @Test
