@@ -50,7 +50,7 @@ public class UserTests {
 
     @Test
     void changeUserNameTest() {
-        UserBodyLombockModel user = new UserBodyLombockModel();
+        UserBodyPojoModel user = new UserBodyPojoModel();
         user.setName("morpheus");
         user.setJob("leader");
 
@@ -70,12 +70,14 @@ public class UserTests {
 
     @Test
     void userRegisterTest() {
+        UserBodyLombockModel user = new UserBodyLombockModel();
+        user.setEmail("eve.holt@reqres.in");
+        user.setPassword("pistol");
 
-        String eveHolt = "{ \"email\": \"eve.holt@reqres.in\", \"password\": \"pistol\" }";
         given()
                 .when()
                 .contentType(JSON)
-                .body(eveHolt)
+                .body(user)
                 .post("https://reqres.in/api/register")
                 .then()
                 .statusCode(200)
