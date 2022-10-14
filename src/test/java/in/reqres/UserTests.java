@@ -19,8 +19,8 @@ public class UserTests {
     void getSingleUserTest() {
         var userId = 3;
         given()
-                .when()
-                .get("https://reqres.in/api/users/" + userId)
+                .spec(requestSpec)
+                .get("/api/users/" + userId)
                 .then()
                 .statusCode(200)
                 .body("data.id", is(userId));
@@ -102,7 +102,7 @@ public class UserTests {
     void deleteUserTest() {
 
         given()
-                .when()
+                .spec(requestSpec)
                 .delete("https://reqres.in/api/users/2")
                 .then()
                 .statusCode(204);
