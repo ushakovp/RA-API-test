@@ -35,7 +35,7 @@ public class UserTests {
         UserBodyResponsePojoModel response = given()
                 .spec(requestSpec)
                 .body(user)
-                .post("api/users")
+                .post("/api/users")
                 .then()
                 .log().all()
                 .statusCode(201)
@@ -71,16 +71,17 @@ public class UserTests {
         user.setEmail("eve.holt@reqres.in");
         user.setPassword("pistol");
 
-        UserBodyResponseLombokModel respone = given()
+        UserBodyResponseLombokModel response = given()
                 .spec(requestSpec)
                 .body(user)
-                .post("api/register")
+                .post("/api/register")
                 .then()
                 .spec(responseSpec)
-                .extract().as(UserBodyResponseLombokModel.class);
+                .extract()
+                .as(UserBodyResponseLombokModel.class);
 
-        assertThat(respone.getId(), notNullValue());
-        assertThat(respone.getToken(), notNullValue());
+        assertThat(response.getId(), notNullValue());
+        assertThat(response.getToken(), notNullValue());
     }
 
     @Test
@@ -103,7 +104,7 @@ public class UserTests {
 
         given()
                 .spec(requestSpec)
-                .delete("https://reqres.in/api/users/2")
+                .delete("/api/users/2")
                 .then()
                 .statusCode(204);
 
