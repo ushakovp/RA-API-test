@@ -6,8 +6,9 @@ import in.reqres.models.pojo.UserBodyPojoModel;
 import in.reqres.models.pojo.UserBodyResponsePojoModel;
 import org.junit.jupiter.api.Test;
 
+import static in.reqres.specs.UserSpec.requestSpec;
+import static in.reqres.specs.UserSpec.responseSpec;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -27,16 +28,14 @@ public class UserTests {
 
     @Test
     void createUserTest() {
-        UserBodyPojoModel user = new UserBodyPojoModel();
+        var user = new UserBodyPojoModel();
         user.setName("morpheus");
         user.setJob("leader");
 
         UserBodyResponsePojoModel response = given()
-                .when()
-                .contentType(JSON)
-                .log().all()
+                .spec(requestSpec)
                 .body(user)
-                .post("https://reqres.in/api/users")
+                .post("api/users")
                 .then()
                 .log().all()
                 .statusCode(201)
@@ -56,14 +55,11 @@ public class UserTests {
         user.setJob("leader");
 
         given()
-                .when()
-                .log().all()
-                .contentType(JSON)
+                .spec(requestSpec)
                 .body(user)
-                .patch("https://reqres.in/api/user/2")
+                .patch("/api/user/2")
                 .then()
-                .log().all()
-                .statusCode(200)
+                .spec(responseSpec)
                 .body("name", is("morpheus"))
                 .body("job", is("leader"))
                 .body("updatedAt", notNullValue());
@@ -76,12 +72,11 @@ public class UserTests {
         user.setPassword("pistol");
 
         UserBodyResponseLombokModel respone = given()
-                .when()
-                .contentType(JSON)
+                .spec(requestSpec)
                 .body(user)
-                .post("https://reqres.in/api/register")
+                .post("api/register")
                 .then()
-                .statusCode(200)
+                .spec(responseSpec)
                 .extract().as(UserBodyResponseLombokModel.class);
 
         assertThat(respone.getId(), notNullValue());
@@ -95,15 +90,11 @@ public class UserTests {
         user.setPassword("pistol");
 
         given()
-                .when()
-                .contentType(JSON)
-                .log().all()
+                .spec(requestSpec)
                 .body(user)
-                .post("https://reqres.in/api/login")
+                .post("/api/login")
                 .then()
-                .log().body()
-                .log().headers()
-                .statusCode(200)
+                .spec(responseSpec)
                 .body("token", notNullValue());
     }
 
