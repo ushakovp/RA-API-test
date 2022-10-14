@@ -6,11 +6,13 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 
+import static in.reqres.helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.with;
 
 public class UserSpec {
 
     public static RequestSpecification requestSpec = with()
+            .filter(withCustomTemplates())
             .baseUri("https://reqres.in")
             .log().body()
             .contentType(ContentType.JSON);

@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
-    id "io.qameta.allure" version "2.10.0"
+    id 'io.qameta.allure' version '2.10.0'
+    id "io.freefair.lombok" version "6.0.0-m2"
 }
 
 repositories {
@@ -27,7 +28,7 @@ dependencies {
             'com.codeborne:selenide:6.8.1',
             'org.slf4j:slf4j-simple:2.0.3',
             'io.qameta.allure:allure-selenide:2.19.0',
-            'org.assertj:assertj-core:3.23.1',
+            'io.qameta.allure:allure-rest-assured:2.19.0',
             'io.rest-assured:rest-assured:5.2.0',
             'org.hamcrest:hamcrest-all:1.3'
     )
